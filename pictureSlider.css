@@ -13,23 +13,15 @@ body {
     display: grid;
     grid-template-columns: auto auto auto;
     position: relative;
-    border: 0px solid black;
     margin: auto;
     z-index: 0;
 }
 
-.row {
-    display: flex;
-    flex-direction: row;
-    position: relative;
-    height: 33.33%;
-}
-
 .cell {
     position: relative;
-    border: 1px solid black;
     background-size: cover;
-    visibility: hidden;
+    opacity: 0;
+    cursor: grab;
 }
 #cell1 {
     background-image: url('/images/1.jpg')
@@ -58,14 +50,3 @@ body {
 #cell9 {
     background-image: url('/images/9.jpg') 
 }
-
-.tile {
-    position: absolute;
-    background-size: cover;
-}
-
-.tile:hover {
-    outline: 2px solid blue;
-    cursor: grab;
-}
-

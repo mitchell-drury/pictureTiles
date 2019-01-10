@@ -3,31 +3,32 @@ let rotate;
 
 function makeMovable() {
     calculateSizeAndPosition();
-    scatterTiles();
+    scatterCells();
     window.onresize = calculateSizeAndPosition;
 }
 
-function scatterTiles() {
-    let tiles = document.getElementsByClassName('tile');
+function scatterCells() {
+    let cells = document.getElementsByClassName('cell');
     let top;
     let left;
+    let cellDimensions;
     let rotation;
-    let imageNumber;
-    for(let i = 0; i < tiles.length; i++) {
-        top = Math.random()*(100) - 2
-        tiles[i].style.top = top + '%';
-        left = Math.random()*(100) - 4
-        tiles[i].style.left = left + '%';
+    for(let i = 0; i < cells.length; i++) {
+        cellDimensions = cells[i].getBoundingClientRect();
+        
+        left = Math.random()*(window.innerWidth - 20) - cellDimensions.left - 10;
+        cells[i].style.left = left;        
+        
+        top = Math.random()*(window.innerHeight - 20) - cellDimensions.top - 10;
+        cells[i].style.top = top;
+        
         rotation = Math.random()*360;
-
-        imageNumber = i+1;
-        tiles[i].style.backgroundImage = "url('/images/" + imageNumber + ".jpg";
-        tiles[i].style.zIndex = i+1;    
-        tiles[i].style.transform = "rotate(" + rotation + "deg)";
+        cells[i].style.transform = "rotate(" + rotation + "deg)";        
+        cells[i].style.zIndex = i+1;    
     }
 }
 
-function scrambleTiles() {
+function scrambleCells() {
 
 }
 
@@ -45,33 +46,36 @@ function calculateSizeAndPosition() {
         document.getElementById('pictureGrid').style.width = width*.8;  
         document.getElementById('pictureGrid').style.top = (height-.8*width)/2;    
     }
-
-    //adjusting the tile sizes
-    let tiles = document.getElementsByClassName('tile');
-    let cellDims = document.getElementById('cell1').getBoundingClientRect();   
-    for (let i = 0; i < tiles.length; i++) {
-        tiles[i].style.width = cellDims.width;
-        tiles[i].style.height = cellDims.height
-    };
 }
 
-function grabTile(event) {
+function mouseOver(event) {
+    event.target.style.opacity = 1;
+}
+
+function grabCell(event) {
     event.target.style.cursor = 'grabbing';
+    let cellDimensions = event.target.getBoundingClientRect();
+    let centerX = cellDimensions.x + cellDimensions.width/2;
+    let centerY = cellDimensions.y + cellDimensions.height/2;
+
+    let diffX = event.clientX - centerX;
+    let diffY = event.clientY - centerY;
 
     //shift the position of the tile to center of cursor
-    event.target.style.top = event.clientY - parseFloat(event.target.style.height)/2;
-    event.target.style.left = event.clientX - parseFloat(event.target.style.width)/2;
+    console.log(event.target.getBoundingClientRect(), event.clientX, event.clientY);
+    event.target.style.top = parseFloat(event.target.style.top) + diffY;
+    event.target.style.left = parseFloat(event.target.style.left) + diffX;
 
     //bring this tile to top: push everything above it down one z index
-    let tiles = document.getElementsByClassName('tile');
+    let cells = document.getElementsByClassName('cell');
     let grabbedZIndex = event.target.style.zIndex;
-    for(let i = 0; i < tiles.length; i++) {
-        let zIndex = parseInt(tiles[i].style.zIndex);
+    for(let i = 0; i < cells.length; i++) {
+        let zIndex = parseInt(cells[i].style.zIndex);
         //console.log(zIndex, grabbedZIndex);
         if(zIndex > grabbedZIndex) {
             //console.log('under');
             zIndex -= 1;
-            tiles[i].style.zIndex = zIndex;
+            cells[i].style.zIndex = zIndex;
         }
     }
     event.target.style.zIndex = 9;
@@ -80,10 +84,10 @@ function grabTile(event) {
     rotate = setTimeout(startRotation, 250, event);
 
     //drag the tile if mouse moves
-    document.onmousemove = moveTile;
+    document.onmousemove = moveCell;
 }
 
-function releaseTile(event) {
+function releaseCell(event) {
     event.target.style.cursor = 'grab';
     clearInterval(spin);
     clearTimeout(rotate);
@@ -135,10 +139,10 @@ function releaseTile(event) {
 }
 
 function startRotation(event) {
-    spin = setInterval(spinTile, 5, event);
+    spin = setInterval(spinCell, 5, event);
 }
 
-function spinTile(event) {
+function spinCell(event) {
     let end = event.target.style.transform.length - 4;
     let degreeString = event.target.style.transform.substring(7, end);
 
@@ -147,7 +151,7 @@ function spinTile(event) {
     event.target.style.transform = "rotate(" + degrees + "deg)";
 }
 
-function moveTile(event) {
+function moveCell(event) {
     //stop spinning if the tile is being moved
     clearInterval(spin);
     
@@ -155,6 +159,6 @@ function moveTile(event) {
     event.target.style.left = event.clientX - parseFloat(event.target.style.width)/2
 }
 
-function setTilePositionPercentage() {
+function setCellPositionPercentage() {
     //after dragging, so that they will still move with screen resize
 }

@@ -10,39 +10,15 @@
 
     <body onload="makeMovable()">
         <div id='pictureGrid'>
-            <!-- <row class='row' id='row1'>
-                <cell class='cell' id='cell1'></cell>
-                <cell class='cell' id='cell2'></cell>
-                <cell class='cell' id='cell3'></cell>
-            </row>
-            <row class='row' id='row2'>
-                <cell class='cell' id='cell4'></cell>
-                <cell class='cell' id='cell5'></cell>
-                <cell class='cell' id='cell6'></cell>
-            </row>
-            <row class='row' id='row3'>
-                <cell class='cell' id='cell7'></cell>
-                <cell class='cell' id='cell8'></cell>
-                <cell class='cell' id='cell9'></cell>
-            </row> -->
-            <cell class='cell' id='cell1' onmouseover="makeVisible()"></cell>
-            <cell class='cell' id='cell2'></cell>
-            <cell class='cell' id='cell3'></cell>
-            <cell class='cell' id='cell4'></cell>
-            <cell class='cell' id='cell5'></cell>
-            <cell class='cell' id='cell6'></cell> 
-            <cell class='cell' id='cell7'></cell>
-            <cell class='cell' id='cell8'></cell>
-            <cell class='cell' id='cell9'></cell>
+            <cell class='cell' id='cell1' onmouseover="mouseOver(event)" onmousedown="grabCell(event)" onmouseup="releaseCell(event)"></cell>
+            <cell class='cell' id='cell2' onmouseover="mouseOver(event)" onmousedown="grabCell(event)" onmouseup="releaseCell(event)"></cell>
+            <cell class='cell' id='cell3' onmouseover="mouseOver(event)" onmousedown="grabCell(event)" onmouseup="releaseCell(event)"></cell>
+            <cell class='cell' id='cell4' onmouseover="mouseOver(event)" onmousedown="grabCell(event)" onmouseup="releaseCell(event)"></cell>
+            <cell class='cell' id='cell5' onmouseover="mouseOver(event)" onmousedown="grabCell(event)" onmouseup="releaseCell(event)"></cell>
+            <cell class='cell' id='cell6' onmouseover="mouseOver(event)" onmousedown="grabCell(event)" onmouseup="releaseCell(event)"></cell> 
+            <cell class='cell' id='cell7' onmouseover="mouseOver(event)" onmousedown="grabCell(event)" onmouseup="releaseCell(event)"></cell>
+            <cell class='cell' id='cell8' onmouseover="mouseOver(event)" onmousedown="grabCell(event)" onmouseup="releaseCell(event)"></cell>
+            <cell class='cell' id='cell9' onmouseover="mouseOver(event)" onmousedown="grabCell(event)" onmouseup="releaseCell(event)"></cell>
         </div>
-        <!-- <div id='tile1' class='tile' onmousedown="grabTile(event)" onmouseup="releaseTile(event)"></div>
-        <div id='tile2' class='tile' onmousedown="grabTile(event)" onmouseup="releaseTile(event)"></div>
-        <div id='tile3' class='tile' onmousedown="grabTile(event)" onmouseup="releaseTile(event)"></div>
-        <div id='tile4' class='tile' onmousedown="grabTile(event)" onmouseup="releaseTile(event)"></div>
-        <div id='tile5' class='tile'onmousedown="grabTile(event)" onmouseup="releaseTile(event)"></div>
-        <div id='tile6' class='tile'onmousedown="grabTile(event)" onmouseup="releaseTile(event)"></div>
-        <div id='tile7' class='tile'onmousedown="grabTile(event)" onmouseup="releaseTile(event)"></div>
-        <div id='tile8' class='tile'onmousedown="grabTile(event)" onmouseup="releaseTile(event)"></div>
-        <div id='tile9' class='tile'onmousedown="grabTile(event)" onmouseup="releaseTile(event)"></div> -->
     </body>
 </html>
