@@ -56,6 +56,7 @@ function calculateSizeAndPosition() {
         document.getElementById('pictureGrid').style.top = (window.innerHeight - gridHeight)/2;
     }
 
+    //also scale the size of the tiles
     let cells = document.getElementsByClassName('cell');
     for(let i = 0; i < cells.length; i++) {
         cells[i].style.width = gridHeight/3;
@@ -105,6 +106,7 @@ function grabCell(event) {
 
 function releaseCell(event) {
     event.target.style.cursor = 'grab';
+    let cellId = parseInt(event.target.id.substring(4))
     clearInterval(spin);
     clearTimeout(rotate);
     event.target.onmousemove = null;
@@ -124,20 +126,42 @@ function releaseCell(event) {
 
         //first quadrant (width and height should always be equal)
         if(event.clientX > (left + width/12) && event.clientX < (left + width*3/12) && event.clientY > (top + width/12) && event.clientY < (top + width*3/12)){
-            event.target.style.top = 0;
-            event.target.style.left = 0;
-
+            event.target.style.top = (0 - Math.floor((cellId-1)/3))*width/3;
+            event.target.style.left = (0 - (cellId-1) % 3)*width/3;
             inBox = true;
         } //second quadrant
         else if(event.clientX > (left + width*5/12) && event.clientX < (left + width*7/12) && event.clientY > (top + width/12) && event.clientY < (top + width*3/12)) { 
-        
-            inBox = true;        
+            event.target.style.top = (0 - Math.floor((cellId-1)/3))*width/3;
+            event.target.style.left = (1 - (cellId-1) % 3)*width/3; inBox = true;        
         } //third
-        else if(event.clientX > (left + width*5/12) && event.clientX < (left + width*9/12) && event.clientY > (top + width/12) && event.clientY < (top + width*3/12)) {
-            
-            inBox = true;
-        }
-
+        else if(event.clientX > (left + width*9/12) && event.clientX < (left + width*11/12) && event.clientY > (top + width/12) && event.clientY < (top + width*3/12)) {
+            event.target.style.top = (0 - Math.floor((cellId-1)/3))*width/3;
+            event.target.style.left = (2 - (cellId-1) % 3)*width/3; inBox = true;        
+        } //fourth
+        else if(event.clientX > (left + width/12) && event.clientX < (left + width*3/12) && event.clientY > (top + width*5/12) && event.clientY < (top + width*7/12)) {
+            event.target.style.top = (1 - Math.floor((cellId-1)/3))*width/3;
+            event.target.style.left = (0 - (cellId-1) % 3)*width/3; inBox = true;        
+        } //fifth
+        else if(event.clientX > (left + width*5/12) && event.clientX < (left + width*7/12) && event.clientY > (top + width*5/12) && event.clientY < (top + width*7/12)) {
+            event.target.style.top = (1 - Math.floor((cellId-1)/3))*width/3;
+            event.target.style.left = (1 - (cellId-1) % 3)*width/3; inBox = true;        
+        } //sixth    
+        else if(event.clientX > (left + width*9/12) && event.clientX < (left + width*11/12) && event.clientY > (top + width*5/12) && event.clientY < (top + width*7/12)) {
+            event.target.style.top = (1 - Math.floor((cellId-1)/3))*width/3;
+            event.target.style.left = (2 - (cellId-1) % 3)*width/3; inBox = true;        
+        } //seventh     
+        else if(event.clientX > (left + width/12) && event.clientX < (left + width*3/12) && event.clientY > (top + width*9/12) && event.clientY < (top + width*11/12)) {
+            event.target.style.top = (2 - Math.floor((cellId-1)/3))*width/3;
+            event.target.style.left = (0 - (cellId-1) % 3)*width/3; inBox = true;        
+        } //eigth      
+        else if(event.clientX > (left + width*5/12) && event.clientX < (left + width*7/12) && event.clientY > (top + width*9/12) && event.clientY < (top + width*11/12)) {
+            event.target.style.top = (2 - Math.floor((cellId-1)/3))*width/3;
+            event.target.style.left = (1 - (cellId-1) % 3)*width/3; inBox = true;        
+        } //ninth     
+        else if(event.clientX > (left + width*9/12) && event.clientX < (left + width*11/12) && event.clientY > (top + width*9/12) && event.clientY < (top + width*11/12)) {
+            event.target.style.top = (2 - Math.floor((cellId-1)/3))*width/3;
+            event.target.style.left = (2 - (cellId-1) % 3)*width/3; inBox = true;        
+        }        
         //if it was in a box, snap it to 90deg
         if(inBox) {
             if(degrees % 90 > 75) {
