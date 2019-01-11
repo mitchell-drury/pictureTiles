@@ -62,6 +62,12 @@ function calculateSizeAndPosition() {
         cells[i].style.width = gridHeight/3;
         cells[i].style.height = gridHeight/3;
     }
+
+    //position the sun
+    document.getElementById('sun').style.width = gridHeight;
+    document.getElementById('sun').style.height = gridHeight;
+    document.getElementById('sun').style.bottom = - gridHeight/2;
+    document.getElementById('sun').style.right = - gridHeight/2;
 }
 
 function mouseOver(event) {
@@ -122,7 +128,7 @@ function releaseCell(event) {
         let width = parseFloat(grid.style.width);
         let left = (window.innerWidth - width)/2;
 
-        console.log(event.clientX, event.clientY, 'topbound:', top + width/12, 'bottombound:', top + width/4, 'leftbound:', left + width/12, 'rightbound:', left + width/4);
+        // console.log(event.clientX, event.clientY, 'topbound:', top + width/12, 'bottombound:', top + width/4, 'leftbound:', left + width/12, 'rightbound:', left + width/4);
 
         //first quadrant (width and height should always be equal)
         if(event.clientX > (left + width/12) && event.clientX < (left + width*3/12) && event.clientY > (top + width/12) && event.clientY < (top + width*3/12)){
@@ -176,6 +182,16 @@ function releaseCell(event) {
                 event.target.style.transform = 'rotate(' + newDegrees + 'deg)';
             }
         }
+    } 
+    if(checkImageArrangement() === 'correct' && event.type === 'mouseup'){
+        //play zelda sound
+        document.getElementById('zelda').play();
+        document.getElementById('pictureGrid').style.animationPlayState = 'running';
+    } else if (checkImageArrangement() === 'needs rotation' && event.type === 'mouseup') {
+        //blink sun
+        document.getElementById('sun').style.animationPlayState = 'running';
+        let stopSun = setTimeout(function() {document.getElementById('sun').style.animationPlayState = 'paused'}, 1400);
+        console.log('neds rotate');
     }
 }
 
@@ -205,4 +221,106 @@ function moveCell(event) {
 
 function setCellPositionPercentage() {
     //after dragging, so that they will still move with screen resize
+}
+
+function checkImageArrangement() {
+    let cells = document.getElementsByClassName('cell');
+    let cellWidth = parseInt(document.getElementById('pictureGrid').style.height)/3;
+    let end;
+    let degrees;
+    if( parseFloat(cells[0].style.top) === 0 && 
+        parseFloat(cells[0].style.left) === 2*cellWidth &&
+        cells[0].style.transform === 'rotate(90deg)' && 
+        parseFloat(cells[1].style.top) === cellWidth && 
+        parseFloat(cells[1].style.left) === cellWidth &&
+        cells[1].style.transform === 'rotate(90deg)' && 
+        parseFloat(cells[2].style.top) === 2*cellWidth && 
+        parseFloat(cells[2].style.left) === 0 &&
+        cells[2].style.transform === 'rotate(90deg)' && 
+        parseFloat(cells[3].style.top) === -cellWidth && 
+        parseFloat(cells[3].style.left) === cellWidth &&
+        cells[3].style.transform === 'rotate(90deg)' && 
+        parseFloat(cells[4].style.top) === 0 && 
+        parseFloat(cells[4].style.left) === 0 &&
+        cells[4].style.transform === 'rotate(90deg)' && 
+        parseFloat(cells[5].style.top) === cellWidth && 
+        parseFloat(cells[5].style.left) === -cellWidth &&
+        cells[5].style.transform === 'rotate(90deg)' && 
+        parseFloat(cells[6].style.top) === -2*cellWidth && 
+        parseFloat(cells[6].style.left) === 0 &&
+        cells[6].style.transform === 'rotate(90deg)' && 
+        parseFloat(cells[7].style.top) === -cellWidth && 
+        parseFloat(cells[7].style.left) === -cellWidth &&
+        cells[7].style.transform === 'rotate(90deg)' && 
+        parseFloat(cells[8].style.top) === 0 && 
+        parseFloat(cells[8].style.left) === -2*cellWidth &&
+        cells[8].style.transform === 'rotate(90deg)' 
+    ) {return 'needs rotation';} 
+    else if (
+        parseFloat(cells[0].style.top) === 2*cellWidth && 
+        parseFloat(cells[0].style.left) === 2*cellWidth &&
+        cells[0].style.transform === 'rotate(180deg)' && 
+        parseFloat(cells[1].style.top) === 2*cellWidth && 
+        parseFloat(cells[1].style.left) === 0 &&
+        cells[1].style.transform === 'rotate(180deg)' && 
+        parseFloat(cells[2].style.top) === 2*cellWidth && 
+        parseFloat(cells[2].style.left) === -2*cellWidth &&
+        cells[2].style.transform === 'rotate(180deg)' && 
+        parseFloat(cells[3].style.top) === 0 && 
+        parseFloat(cells[3].style.left) === 2*cellWidth &&
+        cells[3].style.transform === 'rotate(180deg)' && 
+        parseFloat(cells[4].style.top) === 0 && 
+        parseFloat(cells[4].style.left) === 0 &&
+        cells[4].style.transform === 'rotate(180deg)' && 
+        parseFloat(cells[5].style.top) === 0 && 
+        parseFloat(cells[5].style.left) === -2*cellWidth &&
+        cells[5].style.transform === 'rotate(180deg)' && 
+        parseFloat(cells[6].style.top) === -2*cellWidth && 
+        parseFloat(cells[6].style.left) === 2*cellWidth &&
+        cells[6].style.transform === 'rotate(180deg)' && 
+        parseFloat(cells[7].style.top) === -2*cellWidth && 
+        parseFloat(cells[7].style.left) === 0 &&
+        cells[7].style.transform === 'rotate(180deg)' && 
+        parseFloat(cells[8].style.top) === -2*cellWidth && 
+        parseFloat(cells[8].style.left) === -2*cellWidth &&
+        cells[8].style.transform === 'rotate(180deg)' ) 
+        {return 'needs rotation';} 
+    else if (
+        parseFloat(cells[0].style.top) === 2*cellWidth && 
+        parseFloat(cells[0].style.left) === 0 &&
+        cells[0].style.transform === 'rotate(270deg)' && 
+        parseFloat(cells[1].style.top) === cellWidth && 
+        parseFloat(cells[1].style.left) === -cellWidth &&
+        cells[1].style.transform === 'rotate(270deg)' && 
+        parseFloat(cells[2].style.top) === 0 && 
+        parseFloat(cells[2].style.left) === -2*cellWidth &&
+        cells[2].style.transform === 'rotate(270deg)' && 
+        parseFloat(cells[3].style.top) === cellWidth && 
+        parseFloat(cells[3].style.left) === cellWidth &&
+        cells[3].style.transform === 'rotate(270deg)' && 
+        parseFloat(cells[4].style.top) === 0 && 
+        parseFloat(cells[4].style.left) === 0 &&
+        cells[4].style.transform === 'rotate(270deg)' && 
+        parseFloat(cells[5].style.top) === -cellWidth && 
+        parseFloat(cells[5].style.left) === -cellWidth &&
+        cells[5].style.transform === 'rotate(270deg)' && 
+        parseFloat(cells[6].style.top) === 0 && 
+        parseFloat(cells[6].style.left) === 2*cellWidth &&
+        cells[6].style.transform === 'rotate(270deg)' && 
+        parseFloat(cells[7].style.top) === -cellWidth && 
+        parseFloat(cells[7].style.left) === cellWidth &&
+        cells[7].style.transform === 'rotate(270deg)' && 
+        parseFloat(cells[8].style.top) === -2*cellWidth && 
+        parseFloat(cells[8].style.left) === 0 &&
+        cells[8].style.transform === 'rotate(270deg)' 
+    ) {return 'needs rotation';} 
+    
+    for(let i = 0; i < cells.length; i++) {
+        end = cells[i].style.transform.length - 4;
+        degrees = parseInt(cells[i].style.transform.substring(7, end));
+        if(cells[i].style.top !== '0px' || cells[i].style.left !== '0px' || degrees !== 0) {
+            return false;
+        }
+    }
+    return 'correct';
 }

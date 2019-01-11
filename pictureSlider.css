@@ -9,12 +9,35 @@ body {
     overflow: hidden;
 }
 
+#sun {
+    position: absolute;
+    margin: 0;
+    background-image: url('images/Sun.png');
+    background-size: cover;
+    z-index: -1;
+    animation: sunSwell 1.5s infinite;
+    animation-play-state: paused;
+}
+
+@keyframes sunSwell {
+    33% {transform: scale(1.1)}
+    100% {transform: scale(1)}
+}
+
 #pictureGrid {
     display: flex;
     flex-flow: row wrap;
     position: relative;
     margin: auto;
     z-index: 0;
+    animation: gridSwell 2s;
+    animation-play-state: paused;
+    animation-fill-mode: forwards;
+}
+
+@keyframes gridSwell {
+    33% {transform: scale(1.1)}
+    100% {transform: scale(1); border: 1px solid black;}
 }
 
 .cell {
@@ -24,29 +47,29 @@ body {
     cursor: grab;
 }
 #cell1 {
-    background-image: url('/images/1.jpg')
+    background-image: url('images/1.jpg')
 }
 #cell2 {
-    background-image: url('/images/2.jpg')
+    background-image: url('images/2.jpg')
 }
 #cell3 {
-    background-image: url('/images/3.jpg')
+    background-image: url('images/3.jpg')
 }
 #cell4 {
-    background-image: url('/images/4.jpg')
+    background-image: url('images/4.jpg')
 }
 #cell5 {
-    background-image: url('/images/5.jpg')
+    background-image: url('images/5.jpg')
 }
 #cell6 {
-    background-image: url('/images/6.jpg')
+    background-image: url('images/6.jpg')
 }
 #cell7 {
-    background-image: url('/images/7.jpg')
+    background-image: url('images/7.jpg')
 }
 #cell8 {
-    background-image: url('/images/8.jpg')
+    background-image: url('images/8.jpg')
 }
 #cell9 {
-    background-image: url('/images/9.jpg') 
+    background-image: url('images/9.jpg') 
 }
