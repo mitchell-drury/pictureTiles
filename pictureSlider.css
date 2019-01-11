@@ -10,11 +10,12 @@ body {
 }
 
 #pictureGrid {
-    display: grid;
-    grid-template-columns: auto auto auto;
+    display: flex;
+    flex-flow: row wrap;
     position: relative;
     margin: auto;
     z-index: 0;
+    border: 1px solid black;
 }
 
 .cell {

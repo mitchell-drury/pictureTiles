@@ -1,5 +1,7 @@
 let spin;
 let rotate;
+let mouseStartX;
+let mouseStartY;
 
 function makeMovable() {
     calculateSizeAndPosition();
@@ -15,7 +17,9 @@ function scatterCells() {
     let rotation;
     for(let i = 0; i < cells.length; i++) {
         cellDimensions = cells[i].getBoundingClientRect();
-        
+        cells[i].style.left = 0;
+        cells[i].style.top = 0;
+        cells[i].style.transform = 'rotate(0deg)';
         left = Math.random()*(window.innerWidth - 20) - cellDimensions.left - 10;
         cells[i].style.left = left;        
         
@@ -35,16 +39,27 @@ function scrambleCells() {
 function calculateSizeAndPosition() {
     let width = window.innerWidth;
     let height = window.innerHeight;
+    let gridHeight;
 
     //sizing and positioning the grid
     if(height < width) {
-        document.getElementById('pictureGrid').style.height = height*.8;
-        document.getElementById('pictureGrid').style.width = height*.8;
-        document.getElementById('pictureGrid').style.top = height*.1;
+        gridHeight = Math.round(height*.8);
+        gridHeight = gridHeight - (gridHeight % 3)
+        document.getElementById('pictureGrid').style.height = gridHeight;
+        document.getElementById('pictureGrid').style.width = gridHeight;
+        document.getElementById('pictureGrid').style.top = gridHeight*.1;
     } else {
-        document.getElementById('pictureGrid').style.height = width*.8;
-        document.getElementById('pictureGrid').style.width = width*.8;  
-        document.getElementById('pictureGrid').style.top = (height-.8*width)/2;    
+        gridHeight = Math.round(width*.8);
+        gridHeight = gridHeight - (gridHeight % 3)
+        document.getElementById('pictureGrid').style.height = gridHeight;
+        document.getElementById('pictureGrid').style.width = gridHeight;
+        document.getElementById('pictureGrid').style.top = (window.innerHeight - gridHeight)/2;
+    }
+
+    let cells = document.getElementsByClassName('cell');
+    for(let i = 0; i < cells.length; i++) {
+        cells[i].style.width = gridHeight/3;
+        cells[i].style.height = gridHeight/3;
     }
 }
 
@@ -54,15 +69,16 @@ function mouseOver(event) {
 
 function grabCell(event) {
     event.target.style.cursor = 'grabbing';
+    mouseStartX = event.clientX;
+    mouseStartY = event.clientY;
+
+    //shift the position of the tile to center of cursor
     let cellDimensions = event.target.getBoundingClientRect();
     let centerX = cellDimensions.x + cellDimensions.width/2;
     let centerY = cellDimensions.y + cellDimensions.height/2;
-
     let diffX = event.clientX - centerX;
     let diffY = event.clientY - centerY;
-
-    //shift the position of the tile to center of cursor
-    console.log(event.target.getBoundingClientRect(), event.clientX, event.clientY);
+    //console.log(event.target.getBoundingClientRect(), event.clientX, event.clientY);
     event.target.style.top = parseFloat(event.target.style.top) + diffY;
     event.target.style.left = parseFloat(event.target.style.left) + diffX;
 
@@ -84,14 +100,14 @@ function grabCell(event) {
     rotate = setTimeout(startRotation, 250, event);
 
     //drag the tile if mouse moves
-    document.onmousemove = moveCell;
+    event.target.onmousemove = moveCell;
 }
 
 function releaseCell(event) {
     event.target.style.cursor = 'grab';
     clearInterval(spin);
     clearTimeout(rotate);
-    document.onmousemove = null;
+    event.target.onmousemove = null;
 
     //snap to a 90 degree rotation if it's close, and in the box
     let end = event.target.style.transform.length - 4;
@@ -108,8 +124,9 @@ function releaseCell(event) {
 
         //first quadrant (width and height should always be equal)
         if(event.clientX > (left + width/12) && event.clientX < (left + width*3/12) && event.clientY > (top + width/12) && event.clientY < (top + width*3/12)){
-            event.target.style.top = (top) + 'px';
-            event.target.style.left = (left) + 'px';
+            event.target.style.top = 0;
+            event.target.style.left = 0;
+
             inBox = true;
         } //second quadrant
         else if(event.clientX > (left + width*5/12) && event.clientX < (left + width*7/12) && event.clientY > (top + width/12) && event.clientY < (top + width*3/12)) { 
@@ -121,17 +138,17 @@ function releaseCell(event) {
             inBox = true;
         }
 
-        //if it was in a box, spin it also
+        //if it was in a box, snap it to 90deg
         if(inBox) {
             if(degrees % 90 > 75) {
                 //snap clockwise
                 let difference = 90 - (degrees % 90); 
-                let newDegrees = degrees + difference;
+                let newDegrees = (degrees + difference) % 360;
                 event.target.style.transform = 'rotate(' + newDegrees + 'deg)';
             } else if(degrees % 90 < 15) {
                 //snap counter clockwise
                 let difference = degrees % 90; 
-                let newDegrees = degrees - difference;
+                let newDegrees = (degrees - difference) % 360;
                 event.target.style.transform = 'rotate(' + newDegrees + 'deg)';
             }
         }
@@ -155,8 +172,11 @@ function moveCell(event) {
     //stop spinning if the tile is being moved
     clearInterval(spin);
     
-    event.target.style.top = event.clientY - parseFloat(event.target.style.height)/2
-    event.target.style.left = event.clientX - parseFloat(event.target.style.width)/2
+    //console.log(event.clientX - mouseDownX, event.clientY - mouseDownY)
+    event.target.style.left = parseFloat(event.target.style.left) + event.clientX - mouseStartX;
+    event.target.style.top = parseFloat(event.target.style.top) + event.clientY - mouseStartY;
+    mouseStartX = event.clientX;
+    mouseStartY = event.clientY;
 }
 
 function setCellPositionPercentage() {
