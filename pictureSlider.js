@@ -4,6 +4,21 @@ let mouseStartX;
 let mouseStartY;
 
 function makeMovable() {
+    let body = document.getElementsByTagName('body')[0];
+    //body.addEventListener('touchmove', preventScrolling, false);
+    console.log("window width: ", window.innerWidth)
+
+    let cells = document.getElementsByClassName('cell');
+    for(let i = 0; i < cells.length; i++) {
+        cells[i].addEventListener('touchstart', function(event) {               event.preventDefault(); grabCell(event);
+        });
+        cells[i].addEventListener('touchmove', function(event) {
+            event.preventDefault(); moveCell(event);
+        });
+        cells[i].addEventListener('touchend', function(event) {
+            event.preventDefault(); releaseCell(event);
+        });
+    }
     calculateSizeAndPosition();
     scatterCells();
     window.onresize = calculateSizeAndPosition;
@@ -20,10 +35,13 @@ function scatterCells() {
         cells[i].style.left = 0;
         cells[i].style.top = 0;
         cells[i].style.transform = 'rotate(0deg)';
-        left = Math.random()*(window.innerWidth - 20) - cellDimensions.left - 10;
+
+        let gameWidth = screen.width < 700 ? screen.width : window.innerWidth;
+        let gameHeight = screen.width < 700 ? screen.height : window.innerHeight;
+        console.log(gameWidth, gameHeight);        
+        left = Math.random()*(gameWidth - 20) - cellDimensions.left - 10;
         cells[i].style.left = left;        
-        
-        top = Math.random()*(window.innerHeight - 20) - cellDimensions.top - 10;
+        top = Math.random()*(gameHeight - 20) - cellDimensions.top - 10;
         cells[i].style.top = top;
         
         rotation = Math.random()*360;
@@ -76,15 +94,15 @@ function mouseOver(event) {
 
 function grabCell(event) {
     event.target.style.cursor = 'grabbing';
-    mouseStartX = event.clientX;
-    mouseStartY = event.clientY;
+    mouseStartX = event.clientX || event.targetTouches[0].clientX;
+    mouseStartY = event.clientY || event.targetTouches[0].clientY;
 
     //shift the position of the tile to center of cursor
     let cellDimensions = event.target.getBoundingClientRect();
     let centerX = cellDimensions.x + cellDimensions.width/2;
     let centerY = cellDimensions.y + cellDimensions.height/2;
-    let diffX = event.clientX - centerX;
-    let diffY = event.clientY - centerY;
+    let diffX = mouseStartX - centerX;
+    let diffY = mouseStartY - centerY;
     //console.log(event.target.getBoundingClientRect(), event.clientX, event.clientY);
     event.target.style.top = parseFloat(event.target.style.top) + diffY;
     event.target.style.left = parseFloat(event.target.style.left) + diffX;
@@ -212,11 +230,13 @@ function moveCell(event) {
     //stop spinning if the tile is being moved
     clearInterval(spin);
     
-    //console.log(event.clientX - mouseDownX, event.clientY - mouseDownY)
-    event.target.style.left = parseFloat(event.target.style.left) + event.clientX - mouseStartX;
-    event.target.style.top = parseFloat(event.target.style.top) + event.clientY - mouseStartY;
-    mouseStartX = event.clientX;
-    mouseStartY = event.clientY;
+    console.log(event);
+    let newX = event.clientX || event.touches[0].clientX;
+    let newY = event.clientY || event.touches[0].clientY;
+    event.target.style.left = parseFloat(event.target.style.left) + newX - mouseStartX;
+    event.target.style.top = parseFloat(event.target.style.top) + newY - mouseStartY;
+    mouseStartX = event.clientX || event.touches[0].clientX;
+    mouseStartY = event.clientY || event.touches[0].clientY;
 }
 
 function setCellPositionPercentage() {
@@ -323,4 +343,14 @@ function checkImageArrangement() {
         }
     }
     return 'correct';
+}
+
+/*FOR TOUCH EVENTS */
+function preventScrolling(event) {
+    console.log('preventing');
+    event.preventDefault();
+}
+
+function touchStart() {
+
 }
