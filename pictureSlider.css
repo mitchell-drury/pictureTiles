@@ -35,7 +35,6 @@ body {
     animation: gridSwell 2s;
     animation-play-state: paused;
     animation-fill-mode: forwards;
-    border: 1px solid black;
 }
 
 @keyframes gridSwell {
@@ -46,7 +45,7 @@ body {
 .cell {
     position: relative;
     background-size: cover;
-    opacity: 100;
+    opacity: 0;
     cursor: grab;
 }
 #cell1 {

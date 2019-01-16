@@ -5,15 +5,16 @@ let mouseStartY;
 
 function makeMovable() {
     let body = document.getElementsByTagName('body')[0];
-    //body.addEventListener('touchmove', preventScrolling, false);
-    console.log("window width: ", window.innerWidth)
+    body.addEventListener('touchmove', function(event) {
+        document.elementFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY).style.opacity = 1;
+    })
 
     let cells = document.getElementsByClassName('cell');
     for(let i = 0; i < cells.length; i++) {
-        cells[i].addEventListener('touchstart', function(event) {               event.preventDefault(); grabCell(event);
+        cells[i].addEventListener('touchstart', function(event) {                event.preventDefault(); grabCell(event);
         });
         cells[i].addEventListener('touchmove', function(event) {
-            event.preventDefault(); moveCell(event);
+            event.preventDefault(); event.target.style.opacity = 1; moveCell(event);
         });
         cells[i].addEventListener('touchend', function(event) {
             event.preventDefault(); releaseCell(event);
@@ -35,13 +36,14 @@ function scatterCells() {
         cells[i].style.left = 0;
         cells[i].style.top = 0;
         cells[i].style.transform = 'rotate(0deg)';
+        let cellDiagonal = Math.sqrt(Math.pow(cellDimensions.width, 2) + Math.pow(cellDimensions.height, 2));
 
-        let gameWidth = screen.width < 700 ? screen.width : window.innerWidth;
-        let gameHeight = screen.width < 700 ? screen.height : window.innerHeight;
-        console.log(gameWidth, gameHeight);        
-        left = Math.random()*(gameWidth - 20) - cellDimensions.left - 10;
+        console.log(document.getElementsByTagName('body')[0].clientHeight);
+        let gameWidth = document.getElementsByTagName('body')[0].clientWidth
+        let gameHeight = document.getElementsByTagName('body')[0].clientHeight;        
+        left = Math.random()*(gameWidth - cellDiagonal/2) - cellDimensions.left;
         cells[i].style.left = left;        
-        top = Math.random()*(gameHeight - 20) - cellDimensions.top - 10;
+        top = Math.random()*(gameHeight - cellDiagonal/2) - cellDimensions.top;
         cells[i].style.top = top;
         
         rotation = Math.random()*360;
@@ -144,45 +146,46 @@ function releaseCell(event) {
         let inBox = false;
         let grid = document.getElementById('pictureGrid');          let top = parseFloat(grid.style.top);
         let width = parseFloat(grid.style.width);
-        let left = (window.innerWidth - width)/2;
-
-        // console.log(event.clientX, event.clientY, 'topbound:', top + width/12, 'bottombound:', top + width/4, 'leftbound:', left + width/12, 'rightbound:', left + width/4);
+        let left = screen.width < 700 ? (screen.width - width)/2: (window.innerWidth - width)/2;
+        console.log(width, left);
+        let clientX = event.clientX || event.changedTouches[0].clientX;
+        let clientY = event.clientY || event.changedTouches[0].clientY;
 
         //first quadrant (width and height should always be equal)
-        if(event.clientX > (left + width/12) && event.clientX < (left + width*3/12) && event.clientY > (top + width/12) && event.clientY < (top + width*3/12)){
+        if(clientX > (left + width/12) && clientX < (left + width*3/12) && clientY > (top + width/12) && clientY < (top + width*3/12)){
             event.target.style.top = (0 - Math.floor((cellId-1)/3))*width/3;
             event.target.style.left = (0 - (cellId-1) % 3)*width/3;
             inBox = true;
         } //second quadrant
-        else if(event.clientX > (left + width*5/12) && event.clientX < (left + width*7/12) && event.clientY > (top + width/12) && event.clientY < (top + width*3/12)) { 
+        else if(clientX > (left + width*5/12) && clientX < (left + width*7/12) && clientY > (top + width/12) && clientY < (top + width*3/12)) { 
             event.target.style.top = (0 - Math.floor((cellId-1)/3))*width/3;
             event.target.style.left = (1 - (cellId-1) % 3)*width/3; inBox = true;        
         } //third
-        else if(event.clientX > (left + width*9/12) && event.clientX < (left + width*11/12) && event.clientY > (top + width/12) && event.clientY < (top + width*3/12)) {
+        else if(clientX > (left + width*9/12) && clientX < (left + width*11/12) && clientY > (top + width/12) && clientY < (top + width*3/12)) {
             event.target.style.top = (0 - Math.floor((cellId-1)/3))*width/3;
             event.target.style.left = (2 - (cellId-1) % 3)*width/3; inBox = true;        
         } //fourth
-        else if(event.clientX > (left + width/12) && event.clientX < (left + width*3/12) && event.clientY > (top + width*5/12) && event.clientY < (top + width*7/12)) {
+        else if(clientX > (left + width/12) && clientX < (left + width*3/12) && clientY > (top + width*5/12) && clientY < (top + width*7/12)) {
             event.target.style.top = (1 - Math.floor((cellId-1)/3))*width/3;
             event.target.style.left = (0 - (cellId-1) % 3)*width/3; inBox = true;        
         } //fifth
-        else if(event.clientX > (left + width*5/12) && event.clientX < (left + width*7/12) && event.clientY > (top + width*5/12) && event.clientY < (top + width*7/12)) {
+        else if(clientX > (left + width*5/12) && clientX < (left + width*7/12) && clientY > (top + width*5/12) && clientY < (top + width*7/12)) {
             event.target.style.top = (1 - Math.floor((cellId-1)/3))*width/3;
             event.target.style.left = (1 - (cellId-1) % 3)*width/3; inBox = true;        
         } //sixth    
-        else if(event.clientX > (left + width*9/12) && event.clientX < (left + width*11/12) && event.clientY > (top + width*5/12) && event.clientY < (top + width*7/12)) {
+        else if(clientX > (left + width*9/12) && clientX < (left + width*11/12) && clientY > (top + width*5/12) && clientY < (top + width*7/12)) {
             event.target.style.top = (1 - Math.floor((cellId-1)/3))*width/3;
             event.target.style.left = (2 - (cellId-1) % 3)*width/3; inBox = true;        
         } //seventh     
-        else if(event.clientX > (left + width/12) && event.clientX < (left + width*3/12) && event.clientY > (top + width*9/12) && event.clientY < (top + width*11/12)) {
+        else if(clientX > (left + width/12) && clientX < (left + width*3/12) && clientY > (top + width*9/12) && clientY < (top + width*11/12)) {
             event.target.style.top = (2 - Math.floor((cellId-1)/3))*width/3;
             event.target.style.left = (0 - (cellId-1) % 3)*width/3; inBox = true;        
         } //eigth      
-        else if(event.clientX > (left + width*5/12) && event.clientX < (left + width*7/12) && event.clientY > (top + width*9/12) && event.clientY < (top + width*11/12)) {
+        else if(clientX > (left + width*5/12) && clientX < (left + width*7/12) && clientY > (top + width*9/12) && clientY < (top + width*11/12)) {
             event.target.style.top = (2 - Math.floor((cellId-1)/3))*width/3;
             event.target.style.left = (1 - (cellId-1) % 3)*width/3; inBox = true;        
         } //ninth     
-        else if(event.clientX > (left + width*9/12) && event.clientX < (left + width*11/12) && event.clientY > (top + width*9/12) && event.clientY < (top + width*11/12)) {
+        else if(clientX > (left + width*9/12) && clientX < (left + width*11/12) && clientY > (top + width*9/12) && clientY < (top + width*11/12)) {
             event.target.style.top = (2 - Math.floor((cellId-1)/3))*width/3;
             event.target.style.left = (2 - (cellId-1) % 3)*width/3; inBox = true;        
         }        
@@ -230,7 +233,6 @@ function moveCell(event) {
     //stop spinning if the tile is being moved
     clearInterval(spin);
     
-    console.log(event);
     let newX = event.clientX || event.touches[0].clientX;
     let newY = event.clientY || event.touches[0].clientY;
     event.target.style.left = parseFloat(event.target.style.left) + newX - mouseStartX;
@@ -349,8 +351,4 @@ function checkImageArrangement() {
 function preventScrolling(event) {
     console.log('preventing');
     event.preventDefault();
-}
-
-function touchStart() {
-
 }
