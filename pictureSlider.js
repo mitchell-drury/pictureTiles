@@ -38,7 +38,6 @@ function scatterCells() {
         cells[i].style.transform = 'rotate(0deg)';
         let cellDiagonal = Math.sqrt(Math.pow(cellDimensions.width, 2) + Math.pow(cellDimensions.height, 2));
 
-        console.log(document.getElementsByTagName('body')[0].clientHeight);
         let gameWidth = document.getElementsByTagName('body')[0].clientWidth
         let gameHeight = document.getElementsByTagName('body')[0].clientHeight;        
         left = Math.random()*(gameWidth - cellDiagonal/2) - cellDimensions.left;
@@ -204,15 +203,14 @@ function releaseCell(event) {
             }
         }
     } 
-    if(checkImageArrangement() === 'correct' && event.type === 'mouseup'){
+    if(checkImageArrangement() === 'correct' && (event.type === 'mouseup' || event.type === 'touchend')){
         //play zelda sound
         document.getElementById('zelda').play();
         document.getElementById('pictureGrid').style.animationPlayState = 'running';
-    } else if (checkImageArrangement() === 'needs rotation' && event.type === 'mouseup') {
+    } else if (checkImageArrangement() === 'needs rotation' && (event.type === 'mouseup' || event.type === 'touchend')) {
         //blink sun
         document.getElementById('sun').style.animationPlayState = 'running';
         let stopSun = setTimeout(function() {document.getElementById('sun').style.animationPlayState = 'paused'}, 1400);
-        console.log('neds rotate');
     }
 }
 
