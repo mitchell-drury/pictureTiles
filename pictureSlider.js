@@ -117,6 +117,7 @@ function mouseOver(event) {
 function grabCell(event) {
     clearInterval(spin);
     clearTimeout(rotate);
+    primaryTarget = event.target;
     event.target.style.cursor = 'grabbing';
     pointerStartX = event.clientX || event.targetTouches[0].clientX;
     pointerStartY = event.clientY || event.targetTouches[0].clientY;
@@ -151,6 +152,7 @@ function grabCell(event) {
 
 function releaseCell(event) {
     event.target.style.cursor = 'grab';
+    primaryTarget = null;
     let cellId = parseInt(event.target.id.substring(4))
     clearInterval(spin);
     clearTimeout(rotate);
