@@ -1,7 +1,9 @@
 let spin;
 let rotate;
-let mouseStartX;
-let mouseStartY;
+let pointerStartX;
+let pointerStartY;
+let primaryTouch;
+let primaryTarget;
 
 function makeMovable() {
     let body = document.getElementsByTagName('body')[0];
@@ -10,15 +12,37 @@ function makeMovable() {
         document.elementFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY).style.opacity = 1;
     }, {passive: false})
 
+    //register event listeners on cells
     let cells = document.getElementsByClassName('cell');
     for(let i = 0; i < cells.length; i++) {
-        cells[i].addEventListener('touchstart', function(event) {                console.log(event); event.preventDefault(); grabCell(event);
+        cells[i].addEventListener('touchstart', function(event) { 
+            event.preventDefault(); 
+            event.target.style.opacity = 1;
+            if (event.touches.length >= 2) {
+                //don't do anything with new touch if there already is one
+                return;
+            }
+            primaryTouch = event.touches[0].identifier;
+            primaryTarget = event.target;
+            console.log(event, primaryTouch); grabCell(event);
         });
         cells[i].addEventListener('touchmove', function(event) {
-            event.preventDefault(); event.target.style.opacity = 1; moveCell(event);
+            event.preventDefault(); moveCell(event);
         });
         cells[i].addEventListener('touchend', function(event) {
-            event.preventDefault(); releaseCell(event);
+            event.preventDefault(); primaryTouch = null; primaryTarget = null; releaseCell(event);
+        });
+        cells[i].addEventListener('mouseover', function(event) {
+            mouseOver(event);
+        });
+        cells[i].addEventListener('mousedown', function(event) {
+            grabCell(event);
+        });
+        cells[i].addEventListener('mouseout', function(event) {
+            releaseCell(event);
+        });
+        cells[i].addEventListener('mouseup', function(event) {
+            releaseCell(event);
         });
     }
     calculateSizeAndPosition();
@@ -50,10 +74,6 @@ function scatterCells() {
         cells[i].style.transform = "rotate(" + rotation + "deg)";        
         cells[i].style.zIndex = i+1;    
     }
-}
-
-function scrambleCells() {
-
 }
 
 function calculateSizeAndPosition() {
@@ -98,15 +118,15 @@ function grabCell(event) {
     clearInterval(spin);
     clearTimeout(rotate);
     event.target.style.cursor = 'grabbing';
-    mouseStartX = event.clientX || event.targetTouches[0].clientX;
-    mouseStartY = event.clientY || event.targetTouches[0].clientY;
+    pointerStartX = event.clientX || event.targetTouches[0].clientX;
+    pointerStartY = event.clientY || event.targetTouches[0].clientY;
 
     //shift the position of the tile to center of cursor
     let cellDimensions = event.target.getBoundingClientRect();
     let centerX = cellDimensions.x + cellDimensions.width/2;
     let centerY = cellDimensions.y + cellDimensions.height/2;
-    let diffX = mouseStartX - centerX;
-    let diffY = mouseStartY - centerY;
+    let diffX = pointerStartX - centerX;
+    let diffY = pointerStartY - centerY;
     event.target.style.top = parseFloat(event.target.style.top) + diffY;
     event.target.style.left = parseFloat(event.target.style.left) + diffX;
 
@@ -123,7 +143,7 @@ function grabCell(event) {
     event.target.style.zIndex = 9;
 
     //start rotation if tile is held without dragging
-    rotate = setTimeout(startRotation, 250, event);
+    rotate = setTimeout(startRotation, 150, event);
 
     //drag the tile if mouse moves
     event.target.onmousemove = moveCell;
@@ -146,7 +166,6 @@ function releaseCell(event) {
         let grid = document.getElementById('pictureGrid');          let top = parseFloat(grid.style.top);
         let width = parseFloat(grid.style.width);
         let left = screen.width < 700 ? (screen.width - width)/2: (window.innerWidth - width)/2;
-        console.log(width, left);
         let clientX = event.clientX || event.changedTouches[0].clientX;
         let clientY = event.clientY || event.changedTouches[0].clientY;
 
@@ -158,35 +177,43 @@ function releaseCell(event) {
         } //second quadrant
         else if(clientX > (left + width*5/12) && clientX < (left + width*7/12) && clientY > (top + width/12) && clientY < (top + width*3/12)) { 
             event.target.style.top = (0 - Math.floor((cellId-1)/3))*width/3;
-            event.target.style.left = (1 - (cellId-1) % 3)*width/3; inBox = true;        
+            event.target.style.left = (1 - (cellId-1) % 3)*width/3; 
+            inBox = true;        
         } //third
         else if(clientX > (left + width*9/12) && clientX < (left + width*11/12) && clientY > (top + width/12) && clientY < (top + width*3/12)) {
             event.target.style.top = (0 - Math.floor((cellId-1)/3))*width/3;
-            event.target.style.left = (2 - (cellId-1) % 3)*width/3; inBox = true;        
+            event.target.style.left = (2 - (cellId-1) % 3)*width/3; 
+            inBox = true;        
         } //fourth
         else if(clientX > (left + width/12) && clientX < (left + width*3/12) && clientY > (top + width*5/12) && clientY < (top + width*7/12)) {
             event.target.style.top = (1 - Math.floor((cellId-1)/3))*width/3;
-            event.target.style.left = (0 - (cellId-1) % 3)*width/3; inBox = true;        
+            event.target.style.left = (0 - (cellId-1) % 3)*width/3; 
+            inBox = true;        
         } //fifth
         else if(clientX > (left + width*5/12) && clientX < (left + width*7/12) && clientY > (top + width*5/12) && clientY < (top + width*7/12)) {
             event.target.style.top = (1 - Math.floor((cellId-1)/3))*width/3;
-            event.target.style.left = (1 - (cellId-1) % 3)*width/3; inBox = true;        
+            event.target.style.left = (1 - (cellId-1) % 3)*width/3; 
+            inBox = true;        
         } //sixth    
         else if(clientX > (left + width*9/12) && clientX < (left + width*11/12) && clientY > (top + width*5/12) && clientY < (top + width*7/12)) {
             event.target.style.top = (1 - Math.floor((cellId-1)/3))*width/3;
-            event.target.style.left = (2 - (cellId-1) % 3)*width/3; inBox = true;        
+            event.target.style.left = (2 - (cellId-1) % 3)*width/3; 
+            inBox = true;        
         } //seventh     
         else if(clientX > (left + width/12) && clientX < (left + width*3/12) && clientY > (top + width*9/12) && clientY < (top + width*11/12)) {
             event.target.style.top = (2 - Math.floor((cellId-1)/3))*width/3;
-            event.target.style.left = (0 - (cellId-1) % 3)*width/3; inBox = true;        
+            event.target.style.left = (0 - (cellId-1) % 3)*width/3; 
+            inBox = true;        
         } //eigth      
         else if(clientX > (left + width*5/12) && clientX < (left + width*7/12) && clientY > (top + width*9/12) && clientY < (top + width*11/12)) {
             event.target.style.top = (2 - Math.floor((cellId-1)/3))*width/3;
-            event.target.style.left = (1 - (cellId-1) % 3)*width/3; inBox = true;        
+            event.target.style.left = (1 - (cellId-1) % 3)*width/3; 
+            inBox = true;        
         } //ninth     
         else if(clientX > (left + width*9/12) && clientX < (left + width*11/12) && clientY > (top + width*9/12) && clientY < (top + width*11/12)) {
             event.target.style.top = (2 - Math.floor((cellId-1)/3))*width/3;
-            event.target.style.left = (2 - (cellId-1) % 3)*width/3; inBox = true;        
+            event.target.style.left = (2 - (cellId-1) % 3)*width/3; 
+            inBox = true;        
         }        
         //if it was in a box, snap it to 90deg
         if(inBox) {
@@ -231,12 +258,12 @@ function moveCell(event) {
     //stop spinning if the tile is being moved
     clearInterval(spin);
     
-    let newX = event.clientX || event.touches[0].clientX;
-    let newY = event.clientY || event.touches[0].clientY;
-    event.target.style.left = parseFloat(event.target.style.left) + newX - mouseStartX;
-    event.target.style.top = parseFloat(event.target.style.top) + newY - mouseStartY;
-    mouseStartX = event.clientX || event.touches[0].clientX;
-    mouseStartY = event.clientY || event.touches[0].clientY;
+    let newX = event.clientX || event.touches[primaryTouch].clientX;
+    let newY = event.clientY || event.touches[primaryTouch].clientY;
+    primaryTarget.style.left = parseFloat(primaryTarget.style.left) + newX - pointerStartX;
+    primaryTarget.style.top = parseFloat(primaryTarget.style.top) + newY - pointerStartY;
+    pointerStartX = event.clientX || event.touches[primaryTouch].clientX;
+    pointerStartY = event.clientY || event.touches[primaryTouch].clientY;
 }
 
 function setCellPositionPercentage() {
@@ -343,10 +370,4 @@ function checkImageArrangement() {
         }
     }
     return 'correct';
-}
-
-/*FOR TOUCH EVENTS */
-function preventScrolling(event) {
-    console.log('preventing');
-    event.preventDefault();
 }
