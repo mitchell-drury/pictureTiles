@@ -6,12 +6,13 @@ let mouseStartY;
 function makeMovable() {
     let body = document.getElementsByTagName('body')[0];
     body.addEventListener('touchmove', function(event) {
+        event.preventDefault();
         document.elementFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY).style.opacity = 1;
-    })
+    }, {passive: false})
 
     let cells = document.getElementsByClassName('cell');
     for(let i = 0; i < cells.length; i++) {
-        cells[i].addEventListener('touchstart', function(event) {                event.preventDefault(); grabCell(event);
+        cells[i].addEventListener('touchstart', function(event) {                console.log(event); event.preventDefault(); grabCell(event);
         });
         cells[i].addEventListener('touchmove', function(event) {
             event.preventDefault(); event.target.style.opacity = 1; moveCell(event);
@@ -94,6 +95,8 @@ function mouseOver(event) {
 }
 
 function grabCell(event) {
+    clearInterval(spin);
+    clearTimeout(rotate);
     event.target.style.cursor = 'grabbing';
     mouseStartX = event.clientX || event.targetTouches[0].clientX;
     mouseStartY = event.clientY || event.targetTouches[0].clientY;
@@ -104,7 +107,6 @@ function grabCell(event) {
     let centerY = cellDimensions.y + cellDimensions.height/2;
     let diffX = mouseStartX - centerX;
     let diffY = mouseStartY - centerY;
-    //console.log(event.target.getBoundingClientRect(), event.clientX, event.clientY);
     event.target.style.top = parseFloat(event.target.style.top) + diffY;
     event.target.style.left = parseFloat(event.target.style.left) + diffX;
 
@@ -113,9 +115,7 @@ function grabCell(event) {
     let grabbedZIndex = event.target.style.zIndex;
     for(let i = 0; i < cells.length; i++) {
         let zIndex = parseInt(cells[i].style.zIndex);
-        //console.log(zIndex, grabbedZIndex);
         if(zIndex > grabbedZIndex) {
-            //console.log('under');
             zIndex -= 1;
             cells[i].style.zIndex = zIndex;
         }
@@ -136,7 +136,7 @@ function releaseCell(event) {
     clearTimeout(rotate);
     event.target.onmousemove = null;
 
-    //snap to a 90 degree rotation if it's close, and in the box
+    //snap to a 90 degree rotation if it's close, and in a box
     let end = event.target.style.transform.length - 4;
     let degreeString = event.target.style.transform.substring(7, end);
     let degrees = parseFloat(degreeString);

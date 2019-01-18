@@ -8,7 +8,15 @@ body {
     padding: 0;
     overflow: hidden;
     overscroll-behavior: none;
-    touch-action: none;
+}
+
+#bodyDiv {
+    height:100%;
+    width:100%;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    overscroll-behavior: none;
 }
 
 #sun {
