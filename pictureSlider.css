@@ -53,7 +53,7 @@ body {
 .cell {
     position: relative;
     background-size: cover;
-    opacity: .5;
+    opacity: 0;
     cursor: grab;
 }
 #cell1 {
